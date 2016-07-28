@@ -24,6 +24,17 @@ class Author:
         self.is_fae = False
 
 
+# Read the data from CSV file
+def read_csv(file, split=','):
+    data = []
+    csv_file = open(file, "r")
+    line = csv_file.read().split("\n")
+    for row in line:
+        if row != "":
+            data.append(row.split(split))
+    return data
+
+
 def getBibTex(query):
     bibtex_list = []
     paper_list = []
@@ -52,7 +63,9 @@ def getBibTex(query):
     aux = 0
     while aux < registers:
         bibtex = ''
-        bibtex = urllib.urlopen('http://inspirehep.net/search?p=' + query + '&of=hx&rg=250&jrec='+str(aux)).read()
+        url = 'http://inspirehep.net/search?p=' + query.encode('ascii') + '&of=hx&rg=250&jrec='+str(aux)
+        bibtex = urllib.urlopen(url.encode('ascii')).read()
+        print "url: ", url.encode('ascii')
 
         # Arrange the info
         bibtex = bibtex.replace('@proceedings', '@article')
@@ -69,7 +82,6 @@ def getBibTex(query):
                 last = entry[0]
                 bibtex_list.append(last)
         aux += 250    # Increase the maximum value of registers showed
-        print aux
 
     for entry in bibtex_list:
         paper = Paper()
@@ -94,9 +106,9 @@ def make_query_authors(name1, name2=''):
     name1 = name1.strip().replace(' ', '+')
     name2 = name2.strip().replace(' ', '+')
 
-    query = 'find+a+' + name1 + '+and+' + name2
+    query = 'find+a+' + name1 + '+and+a+' + name2
 
-    print 'Query: ' + query.replace('+', ' ')
+    print 'Query: ' + query
 
     list = getBibTex(query)
 
@@ -111,9 +123,37 @@ def make_query(query):
     return list
 
 
+def find_signature(name):
+    signature = ''
+    signature_file = read_csv('investigadores_tiny.txt',';')
+    for line in signature_file:
+        if name in line[0]:
+            signature = line[1]
+    return signature
+
+
 if __name__ == "__main__":
     # list = make_query_authors('Sanchez-Hernandez, A.', 'Ramirez Sanchez')
-    list = make_query('Hernandez Villanueva')
+    #list = make_query('find a Hernandez Villanueva')
 
-    print "Lista: ", len(list)
-    print list[0]
+    # First, read the authors list
+    authors_file = read_csv('RedFAENodes_tiny.csv')
+    authors_file.pop(0)
+
+    num_authors = len(authors_file)
+
+    find_signature('Eduard')
+
+    Matrix = [[0 for x in range(num_authors)] for y in range(num_authors)]
+
+    # Make the search of authors
+    for author in authors_file:
+        for author2 in authors_file:
+            if author[0] < author2[0]:
+
+                list = make_query_authors(find_signature(author[1]), find_signature(author2[1]))
+                Matrix[int(author[0])][int(author2[0])] = list
+                Matrix[int(author2[0])][int(author[0])] = list
+                print list
+    # print "Lista: ", len(list)
+    # print list[0]
