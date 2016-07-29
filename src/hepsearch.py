@@ -1,3 +1,5 @@
+# Functions to obtain the info from Inspirehep.net   -- Michel
+
 import sys, os, getopt, re, urllib
 from html2text import *
 
