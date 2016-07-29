@@ -1,5 +1,5 @@
 import sys, os, getopt, re, urllib
-
+from html2text import *
 
 class Paper:
     def __init__(self, paper_name = ''):
@@ -15,13 +15,40 @@ class Paper:
 
 
 class Author:
-    def __init__(self, author_name):
+    def __init__(self, author_name, gender, country = ''):
         self.name = author_name
-        self.country = ''
+        self.num_papers = 0
         self.affiliation = ''
-        self.papers = []
-        self.alternative_names = []
-        self.is_fae = False
+        self.signature = find_signature(author_name, True)
+        self.is_fae = True
+        self.cites = 0
+        self.hindex = 0
+        self.country = country
+        self.gender = gender
+
+    def __str__(self):
+        info = "Name: " + self.signature + "\nPublished papers: " + str(self.num_papers) + "\nCites: " + str(self.cites) + \
+                "\nhindex: " + str(self.hindex)
+        return info
+
+    def get_hindex(self):
+        # Make the query in format Cite Summary
+        query = 'find a ' + self.signature
+        if self.country != '':
+            query += ' and cc ' + self.country
+        url = 'http://inspirehep.net/search?p=' + query.encode('ascii').replace(' ','+') + '&of=hcs'
+        print url
+        summary = extract_html(url)
+
+        # Find the h index and cites
+        for line in summary.split('\n'):
+            if 'hHEP index' in line:
+                self.hindex = int(line.split(';')[1].replace(',',''))
+            if 'Total number of citations' in line:
+                self.cites = int(line.split(';')[1].replace(',',''))
+            if 'Total number of papers' in line:
+                self.num_papers = int(line.split(';')[1].replace(',',''))
+
 
 
 # Read the data from CSV file
@@ -123,37 +150,31 @@ def make_query(query):
     return list
 
 
-def find_signature(name):
+def find_signature(name, all = False):
     signature = ''
     signature_file = read_csv('investigadores_tiny.txt',';')
     for line in signature_file:
         if name in line[0]:
-            signature = line[1]
+            if len(line) == 2:
+                signature = line[1]
+            # Connect the signatures with 'or' operand
+            elif len(line) > 2:
+                signature = line[1]
+                if all:
+                    for x in range(2, len(line)):
+                        signature += ' or ' + line[x]
+    # If there is no signature, make the 'Lastname, Name' format
+    if signature == '':
+        sig = name.split('.')
+        if len(sig) == 2:
+            signature = sig[1] + ', ' + sig[0]+ '.'
+        elif len(sig) == 1:
+            signature = sig[0]
+        elif len(sig) > 2:
+            signature = sig[len(sig)-1] + ', ' + sig[0] + '.' + sig[1] + '.'
     return signature
 
 
-if __name__ == "__main__":
-    # list = make_query_authors('Sanchez-Hernandez, A.', 'Ramirez Sanchez')
-    #list = make_query('find a Hernandez Villanueva')
 
-    # First, read the authors list
-    authors_file = read_csv('RedFAENodes_tiny.csv')
-    authors_file.pop(0)
 
-    num_authors = len(authors_file)
 
-    find_signature('Eduard')
-
-    Matrix = [[0 for x in range(num_authors)] for y in range(num_authors)]
-
-    # Make the search of authors
-    for author in authors_file:
-        for author2 in authors_file:
-            if author[0] < author2[0]:
-
-                list = make_query_authors(find_signature(author[1]), find_signature(author2[1]))
-                Matrix[int(author[0])][int(author2[0])] = list
-                Matrix[int(author2[0])][int(author[0])] = list
-                print list
-    # print "Lista: ", len(list)
-    # print list[0]
