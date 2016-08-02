@@ -23,7 +23,7 @@ outputWriter.writerow(['Source','Target','Type','Weight'])
 
 for x in range(len(Matrix[0])):
     for y in range(x,len(Matrix[0])):
-        if len(Matrix[x][y]) != 0 and x != y:
+        if len(Matrix[x][y]) != 0 and x < y:
             outputWriter.writerow([x,y,'Undirected',len(Matrix[x][y])])
 
 file_obj.close()

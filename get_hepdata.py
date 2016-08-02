@@ -17,7 +17,7 @@ Matrix = [[empty_list for x in range(num_authors)] for y in range(num_authors)]
 # Make the search of authors
 for author in nodes_file:
     for author2 in nodes_file:
-        if author[0] < author2[0]:
+        if int(author[0]) < int(author2[0]):
 
             list = make_query_authors(find_signature(author[1]), find_signature(author2[1]))
             Matrix[int(author[0])][int(author2[0])] = list
