@@ -15,6 +15,6 @@ else:
 h_total = 0.0
 for author in author_list:
     h_total += author.hindex
-
+    print author.name,',',author.hindex, ',', author.num_papers
 
 print "h-index promedio: ", h_total/len(author_list)

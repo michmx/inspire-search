@@ -2,6 +2,7 @@
 
 import sys, os, getopt, re, urllib
 from html2text import *
+import unicodedata
 
 class Paper:
     def __init__(self, paper_name = ''):
@@ -152,9 +153,20 @@ def make_query(query):
     return list
 
 
+def strip_accents(text):
+    try:
+        text = unicode(text, 'utf-8')
+    except NameError: # unicode is a default on python 3
+        pass
+    text = unicodedata.normalize('NFD', text)
+    text = text.encode('ascii', 'ignore')
+    text = text.decode("utf-8")
+    return str(text)
+
+
 def find_signature(name, all = False):
     signature = ''
-    signature_file = read_csv('investigadores_tiny.txt',';')
+    signature_file = read_csv('investigadores.txt',';')
     for line in signature_file:
         if name in line[0]:
             if len(line) == 2:
@@ -164,7 +176,8 @@ def find_signature(name, all = False):
                 signature = line[1]
                 if all:
                     for x in range(2, len(line)):
-                        signature += ' or ' + line[x]
+                        if line[x] != '':
+                            signature += ' or ' + line[x]
     # If there is no signature, make the 'Lastname, Name' format
     if signature == '':
         sig = name.split('.')
@@ -174,7 +187,7 @@ def find_signature(name, all = False):
             signature = sig[0]
         elif len(sig) > 2:
             signature = sig[len(sig)-1] + ', ' + sig[0] + '.' + sig[1] + '.'
-    return signature
+    return strip_accents(signature)
 
 
 
