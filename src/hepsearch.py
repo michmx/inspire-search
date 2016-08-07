@@ -53,6 +53,36 @@ class Author:
                 self.num_papers = int(line.split(';')[1].replace(',',''))
 
 
+class Country:
+    def __init__(self, country_name, country_code ):
+        self.name = country_name
+        self.code = country_code
+        self.num_papers = 0
+        self.cites = 0
+        self.hindex = 0
+
+    def get_hindex(self):
+        # Make the query in format Cite Summary
+        query = 'find cc ' + self.code
+        url = 'http://inspirehep.net/search?p=' + query.encode('ascii').replace(' ','+') + '&of=hcs'
+        print url
+        summary = extract_html(url)
+
+        # Find the h index and cites
+        for line in summary.split('\n'):
+            if 'hHEP index' in line:
+                self.hindex = int(line.split(';')[1].replace(',',''))
+            if 'Total number of citations' in line:
+                self.cites = int(line.split(';')[1].replace(',',''))
+            if 'Total number of papers' in line:
+                self.num_papers = int(line.split(';')[1].replace(',',''))
+
+    def __str__(self):
+        info = "Name: " + self.name + "\nCode:" + self.code +  "\nPublished papers: " + str(self.num_papers) +\
+               "\nCites: " + str(self.cites) + "\nhindex: " + str(self.hindex)
+        return info
+
+
 
 # Read the data from CSV file
 def read_csv(file, split=','):

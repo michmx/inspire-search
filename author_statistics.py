@@ -3,7 +3,7 @@
 from src.hepsearch import Author
 import pickle, os.path, sys, csv
 
-# Get the collaboration matrix from file
+
 file_name = 'data/FAEmembers.dat'
 if os.path.isfile(file_name):
     file_obj = open(file_name,'rb')
