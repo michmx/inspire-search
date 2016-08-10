@@ -46,10 +46,9 @@ Matrix = [[empty_list for x in range(len(author_list))] for y in range(len(count
 # Make the search of authors with countries
 for x in range(0,len(author_list)):
     for y in range(0,len(countries_list)):
-        if x < y and author_list[x].num_papers != 0 and countries_list[y].num_papers != 0:
+        if author_list[x].num_papers != 0 and countries_list[y].num_papers != 0:
             list_papers = make_query('a '+ author_list[x].signature + ' and cc ' +  countries_list[y].code)
             Matrix[x][y] = list_papers
-            Matrix[y][x] = list_papers
 
 
 # Save the collaboration matrix in a file

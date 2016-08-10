@@ -7,7 +7,7 @@ import pickle, sys, os
 node_number = 69
 
 # New signature to search
-node_name = 'Cruz, Emilia'
+node_name = 'E.Cruz.Alaniz.1'
 
 # Get the collaboration matrix from file
 file_name = 'data/connections.dat'
