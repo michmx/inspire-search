@@ -31,23 +31,15 @@ if os.path.isfile(file_name):
 else:
     sys.exit("ERROR: Authors info doesn't exist. Run first get_hepAuthor.")
 
-print len(countries_list)
-print len(author_list)
-print len(Matrix[0])
-print len(Matrix)
 
 for y in range(len(countries_list)):
-    auxTitle = []
-    papers = 0
+    colaboradores = []
     for x in range(len(author_list)):
         if author_list[x].num_papers != 0 and countries_list[y].num_papers != 0:
-            print Matrix[x][y]
-            for z in range(0, len(Matrix[x][y])):
-                if not (Matrix[x][y])[z].title in auxTitle:
-                    auxTitle.append((Matrix[x][y])[z].title)
-                papers += len(auxTitle)
-
-    if papers != 0:
-        print 'Colaboracion con ', countries_list[y].name, ', Papers: ', papers
+            if len(Matrix[y][x]) != 0:
+                colaboradores.append(author_list[x].name)
+    if len(colaboradores) != 0:
+        print 'Colaboracion con ', countries_list[y].name, ', Colaboradores:', len(colaboradores)
+       # print "\t",colaboradores
 
 
