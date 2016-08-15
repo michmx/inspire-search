@@ -34,12 +34,20 @@ else:
 
 for y in range(len(countries_list)):
     colaboradores = []
+    papers = 0
+    no_repetidos = []
     for x in range(len(author_list)):
         if author_list[x].num_papers != 0 and countries_list[y].num_papers != 0:
             if len(Matrix[y][x]) != 0:
                 colaboradores.append(author_list[x].name)
+                papers += len(Matrix[y][x])
+            for z in range(len(Matrix[y][x])):
+                if not Matrix[y][x][z].title in no_repetidos:
+                    no_repetidos.append(Matrix[y][x][z].title)
+
     if len(colaboradores) != 0:
-        print 'Colaboracion con ', countries_list[y].name, ', Colaboradores:', len(colaboradores)
+        print 'Colaboracion con ', countries_list[y].name, ', Colaboradores:', len(colaboradores),\
+             ", Papers:",len(no_repetidos)
        # print "\t",colaboradores
 
 
