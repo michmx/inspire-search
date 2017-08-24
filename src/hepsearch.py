@@ -3,6 +3,7 @@
 import sys, os, getopt, re, urllib
 from html2text import *
 import unicodedata
+import codecs
 
 class Paper:
     def __init__(self, paper_name = ''):
@@ -194,10 +195,30 @@ def strip_accents(text):
     return str(text)
 
 
+# Gets node in format [id, name, signatures]. Returns signatures
+def check_signature(node, all = False):
+    if node[2].strip() != '':
+        signatures = node[2].split(';')
+        if len(signatures) == 1 or not all:
+            return signatures[0].strip()
+        # If all = True, join all signatures with 'or' operand
+        signature = signatures[0].strip()
+        for x in range(1, len(signatures) - 1):
+            signature += ' or ' + signatures[x].strip()
+        return signature
+
+    # If there is no signature, make the 'Lastname, Name' format
+    [first, last] = node[1].split(".")
+    signature = last.replace("-", " ") + ", " + first
+    return signature
+
+
+
+
 def find_signature(name, all = False):
     signature = ''
-    signature_file = read_csv('investigadores.txt',';')
-    for line in signature_file:
+    members_file = read_csv('MiembrosRedFAE2017.csv',';')
+    for line in members_file:
         if name in line[0]:
             if len(line) == 2:
                 signature = line[1]
