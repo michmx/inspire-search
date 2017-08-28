@@ -123,9 +123,16 @@ def getBibTex(query):
     # INSPIRE only shows 250 registers
     aux = 0
     while aux < registers:
-        bibtex = ''
+        bibtex = None
         url = 'http://inspirehep.net/search?p=' + query.encode('ascii') + '&of=hx&rg=250&jrec='+str(aux)
-        bibtex = urllib.urlopen(url.encode('ascii')).read()
+        while bibtex is None:
+            try:
+                bibtex = urllib.urlopen(url.encode('ascii')).read()
+            except urllib.request.HTTPError as e:
+                print str(e)
+                print "Retry..."
+
+            
         print "url: ", url.encode('ascii')
 
         # Arrange the info

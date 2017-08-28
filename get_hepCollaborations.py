@@ -5,7 +5,7 @@ import pickle, os, csv
 
 # MiembrosRedFAE2017.dat contains the info of the form filled by FAE members
 # First, read the members file
-members_file = read_csv('data/MiembrosRedFAE2017.txt','|')
+members_file = read_csv('data/MiembrosRedFAE2017.dat','|')
 #members_file.pop(0)
 
 num_authors = len(members_file)
@@ -45,7 +45,6 @@ for author in nodes:
             Matrix[int(author[0])][int(author2[0])] = list
             Matrix[int(author2[0])][int(author[0])] = list
 
-exit(0)
 # Save the collaboration matrix in a file
 file_name = 'data/connections.dat'
 file_obj = open(file_name,'wb')
