@@ -1,6 +1,6 @@
 # Functions to obtain the info from Inspirehep.net   -- Michel
 
-import sys, os, getopt, re, urllib
+import sys, os, getopt, re, urllib2, socket
 from html2text import *
 import unicodedata
 import codecs
@@ -100,7 +100,17 @@ def getBibTex(query):
     bibtex_list = []
     paper_list = []
 
-    bibtex = urllib.urlopen('http://inspirehep.net/search?p=' + query + '&of=hx').read()
+    bibtex = None
+    while bibtex is None:
+        try:
+            bibtex = urllib2.urlopen('http://inspirehep.net/search?p=' + query + '&of=hx', timeout=100).read()
+        except urllib2.URLError as e:
+            print str(e)
+            print "Retry..."
+        except socket.timeout as e:
+            print str(e)
+            print "Retry..."
+            
 
     # First, find the number of registers
     registers = 0
@@ -127,8 +137,11 @@ def getBibTex(query):
         url = 'http://inspirehep.net/search?p=' + query.encode('ascii') + '&of=hx&rg=250&jrec='+str(aux)
         while bibtex is None:
             try:
-                bibtex = urllib.urlopen(url.encode('ascii')).read()
-            except urllib.request.HTTPError as e:
+                bibtex = urllib2.urlopen(url.encode('ascii'), timeout=100).read()
+            except urllib2.URLError as e:
+                print str(e)
+                print "Retry..."
+            except socket.timeout as e:
                 print str(e)
                 print "Retry..."
 
