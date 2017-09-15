@@ -4,7 +4,7 @@ from src.hepsearch import Author
 import pickle, os.path, sys, csv
 
 
-file_name = 'data/FAEmembers.dat'
+file_name = 'data/authors.dat'
 if os.path.isfile(file_name):
     file_obj = open(file_name,'rb')
     author_list = pickle.load(file_obj)

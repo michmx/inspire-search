@@ -19,16 +19,19 @@ class Paper:
 
 
 class Author:
-    def __init__(self, author_name, gender, country = ''):
-        self.name = author_name
+    # node in format[id, name, signatures]
+    def __init__(self, node, country = ''):
+        self.name = node[1]
         self.num_papers = 0
         self.affiliation = ''
-        self.signature = find_signature(author_name, True)
+        self.signature = check_signature(node, True)
         self.is_fae = True
         self.cites = 0
         self.hindex = 0
         self.country = country
-        self.gender = gender
+        self.gender = ''  # To be included in the node?
+
+
 
     def __str__(self):
         info = "Name: " + self.signature + "\nPublished papers: " + str(self.num_papers) + "\nCites: " + str(self.cites) + \
@@ -231,36 +234,6 @@ def check_signature(node, all = False):
     [first, last] = node[1].split(".")
     signature = last.replace("-", " ") + ", " + first
     return signature
-
-
-
-
-def find_signature(name, all = False):
-    signature = ''
-    members_file = read_csv('MiembrosRedFAE2017.csv',';')
-    for line in members_file:
-        if name in line[0]:
-            if len(line) == 2:
-                signature = line[1]
-            # Connect the signatures with 'or' operand
-            elif len(line) > 2:
-                signature = line[1]
-                if all:
-                    for x in range(2, len(line)):
-                        if line[x] != '':
-                            signature += ' or ' + line[x]
-    # If there is no signature, make the 'Lastname, Name' format
-    if signature == '':
-        sig = name.split('.')
-        if len(sig) == 2:
-            signature = sig[1] + ', ' + sig[0]+ '.'
-        elif len(sig) == 1:
-            signature = sig[0]
-        elif len(sig) > 2:
-            signature = sig[len(sig)-1] + ', ' + sig[0] + '.' + sig[1] + '.'
-    return strip_accents(signature)
-
-
 
 
 
