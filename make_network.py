@@ -15,7 +15,7 @@ else:
 
 
 # Make the Gephi input file
-gephi_input = 'RedFAEConnections.csv'
+gephi_input = 'output/RedFAEConnections.csv'
 file_obj = open(gephi_input,'w')
 
 outputWriter = csv.writer(file_obj)
