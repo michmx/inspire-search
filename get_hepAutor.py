@@ -20,17 +20,17 @@ for member in members_file:
         authors_names.append([id, node_name, member[16]])
         id += 1
     else:
-        print "WARNING: %s may be duplicated" % node_name
+        print("WARNING: %s may be duplicated" % node_name)
 
 authors_list = [];
 
 for node in authors_names:
-    # Create object author. The last parameter is the country and is optional
-    author = Author(node, 'mx')
+    # Create object author.
+    author = Author(node)
     # Obtain info from Inspire
     author.get_hindex()
 
-    print author
+    print(author)
     authors_list.append(author)
 
 # Save the list of authors in a file

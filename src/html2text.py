@@ -1,10 +1,12 @@
+
+
 import urllib
 from bs4 import BeautifulSoup
 
 def extract_html(url):
-    html = urllib.urlopen(url).read()
+    html = urllib.request.urlopen(url).read()
     # Make easier to read
-    html = html.replace('<td>','\n').replace('<td align="right">','; ').replace('</table>','\n')
+    html = html.decode().replace('<td>', '\n').replace('<td align="right">', '; ').replace('</table>', '\n')
     soup = BeautifulSoup(html,"lxml")
 
     # kill all script

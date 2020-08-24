@@ -1,7 +1,7 @@
 # Functions to obtain the info from Inspirehep.net   -- Michel
 
-import sys, os, getopt, re, urllib2, socket
-from html2text import *
+import sys, os, getopt, re, urllib, socket
+from src.html2text import extract_html
 import unicodedata
 import codecs
 
@@ -43,8 +43,9 @@ class Author:
         query = 'find a ' + self.signature
         if self.country != '':
             query += ' and cc ' + self.country
-        url = 'http://inspirehep.net/search?p=' + query.encode('ascii').replace(' ','+') + '&of=hcs'
-        print url
+        #url = 'http://inspirehep.net/search?p=' + query.encode('ascii').replace(' ','+') + '&of=hcs'
+        url = 'http://inspirehep.net/search?p=' + query.replace(' ', '+') + '&of=hcs'
+        print(url)
         summary = extract_html(url)
 
         # Find the h index and cites
@@ -69,7 +70,7 @@ class Country:
         # Make the query in format Cite Summary
         query = 'find cc ' + self.code
         url = 'http://inspirehep.net/search?p=' + query.encode('ascii').replace(' ','+') + '&of=hcs'
-        print url
+        print(url)
         summary = extract_html(url)
 
         # Find the h index and cites
@@ -106,13 +107,13 @@ def getBibTex(query):
     bibtex = None
     while bibtex is None:
         try:
-            bibtex = urllib2.urlopen('http://inspirehep.net/search?p=' + query + '&of=hx', timeout=100).read()
-        except urllib2.URLError as e:
-            print str(e)
-            print "Retry..."
+            bibtex = urllib.request.urlopen('http://inspirehep.net/search?p=' + query + '&of=hx', timeout=100).read()
+        except urllib.error.URLError as e:
+            print(str(e))
+            print("Retry...")
         except socket.timeout as e:
-            print str(e)
-            print "Retry..."
+            print(str(e))
+            print("Retry...")
             
 
     # First, find the number of registers
@@ -127,11 +128,11 @@ def getBibTex(query):
                 registers = int(record_line[0].replace('<strong>', '').replace(',', '').strip())
                 records_fixed = True
     if records_fixed == True and registers == 0:
-        print "ERROR: something is wrong. \n"
+        print("ERROR: something is wrong. \n")
     elif records_fixed == False or registers == 0:
-        print "WARNING: Sorry, no records found. \n"
+        print("WARNING: Sorry, no records found. \n")
     else:
-        print 'Registros: ', registers
+        print('Registros: ', registers)
 
     # INSPIRE only shows 250 registers
     aux = 0
@@ -142,14 +143,14 @@ def getBibTex(query):
             try:
                 bibtex = urllib2.urlopen(url.encode('ascii'), timeout=100).read()
             except urllib2.URLError as e:
-                print str(e)
-                print "Retry..."
+                print(str(e))
+                print("Retry...")
             except socket.timeout as e:
-                print str(e)
-                print "Retry..."
+                print(str(e))
+                print("Retry...")
 
             
-        print "url: ", url.encode('ascii')
+        print("url: ", url.encode('ascii'))
 
         # Arrange the info
         bibtex = bibtex.replace('@proceedings', '@article')
@@ -192,7 +193,7 @@ def make_query_authors(name1, name2=''):
 
     query = 'find+a+' + name1 + '+and+a+' + name2
 
-    print 'Query: ' + query
+    print('Query: ' + query)
 
     list = getBibTex(query)
 
@@ -200,7 +201,7 @@ def make_query_authors(name1, name2=''):
 
 
 def make_query(query):
-    print 'Query: ' + query
+    print('Query: ' + query)
     query = query.replace(' ','+')
     list = getBibTex(query)
 
